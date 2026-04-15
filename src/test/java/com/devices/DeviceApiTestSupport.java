@@ -105,9 +105,9 @@ abstract class DeviceApiTestSupport {
 
         mockMvc.perform(put("/api/devices/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"X2\",\"brand\":\"Y2\",\"state\":\"IN_USE\"}"))
+                        .content("{\"name\":\"X2\",\"brand\":\"Y2\",\"state\":\"INACTIVE\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.state").value("IN_USE"));
+                .andExpect(jsonPath("$.state").value("INACTIVE"));
 
         mockMvc.perform(get("/api/devices/" + id))
                 .andExpect(jsonPath("$.createdAt").value(createdAt));
