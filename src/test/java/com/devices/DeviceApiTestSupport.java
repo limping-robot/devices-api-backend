@@ -223,4 +223,54 @@ abstract class DeviceApiTestSupport {
                 .andExpect(jsonPath("$.name").value("Renamed"))
                 .andExpect(jsonPath("$.state").value("AVAILABLE"));
     }
+
+    @Test
+    void paginationPageSizeIsRespected() throws Exception {
+        for (int i = 1; i <= 3; i++) {
+            mockMvc.perform(post("/api/devices")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"name\":\"Device" + i + "\",\"brand\":\"Brand\"}"))
+                    .andExpect(status().isCreated());
+        }
+
+        mockMvc.perform(get("/api/devices").param("size", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.totalPages").value(2));
+    }
+
+    @Test
+    void paginationSecondPageReturnsRemainingItems() throws Exception {
+        for (int i = 1; i <= 3; i++) {
+            mockMvc.perform(post("/api/devices")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"name\":\"Device" + i + "\",\"brand\":\"Brand\"}"))
+                    .andExpect(status().isCreated());
+        }
+
+        mockMvc.perform(get("/api/devices").param("page", "1").param("size", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.totalElements").value(3));
+    }
+
+    @Test
+    void paginationRespectsFilteredCount() throws Exception {
+        for (int i = 1; i <= 3; i++) {
+            mockMvc.perform(post("/api/devices")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"name\":\"Device" + i + "\",\"brand\":\"Acme\"}"))
+                    .andExpect(status().isCreated());
+        }
+        mockMvc.perform(post("/api/devices")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Other\",\"brand\":\"Other\"}"))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/api/devices").param("brand", "acme").param("size", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.totalElements").value(3));
+    }
 }
