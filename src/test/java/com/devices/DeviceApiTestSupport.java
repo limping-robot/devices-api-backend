@@ -45,26 +45,26 @@ abstract class DeviceApiTestSupport {
 
         mockMvc.perform(get("/api/devices"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
+                .andExpect(jsonPath("$.content.length()").value(2));
 
         mockMvc.perform(get("/api/devices").param("brand", "acme"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
+                .andExpect(jsonPath("$.content.length()").value(2));
 
         mockMvc.perform(get("/api/devices").param("state", "INACTIVE"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.content.length()").value(1));
 
         mockMvc.perform(get("/api/devices").param("brand", "Acme").param("state", "AVAILABLE"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.content.length()").value(1));
 
         var list = mockMvc.perform(get("/api/devices").param("state", "AVAILABLE"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        var id = objectMapper.readTree(list).get(0).get("id").asLong();
+        var id = objectMapper.readTree(list).get("content").get(0).get("id").asLong();
 
         mockMvc.perform(get("/api/devices/" + id))
                 .andExpect(status().isOk())

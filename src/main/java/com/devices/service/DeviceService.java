@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class DeviceService {
@@ -35,18 +36,18 @@ public class DeviceService {
     }
 
     @Transactional(readOnly = true)
-    public List<Device> list(String brand, DeviceState state) {
+    public Page<Device> list(String brand, DeviceState state, Pageable pageable) {
         boolean hasBrand = brand != null && !brand.isBlank();
         if (hasBrand && state != null) {
-            return devices.findByBrandIgnoreCaseAndState(brand, state);
+            return devices.findByBrandIgnoreCaseAndState(brand, state, pageable);
         }
         if (hasBrand) {
-            return devices.findByBrandIgnoreCase(brand);
+            return devices.findByBrandIgnoreCase(brand, pageable);
         }
         if (state != null) {
-            return devices.findByState(state);
+            return devices.findByState(state, pageable);
         }
-        return devices.findAll();
+        return devices.findAll(pageable);
     }
 
     @Transactional

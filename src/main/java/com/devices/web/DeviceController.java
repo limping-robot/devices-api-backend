@@ -10,6 +10,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/devices")
@@ -52,10 +53,11 @@ public class DeviceController {
 
     @GetMapping
     @Operation(summary = "List devices (optionally filter by brand and/or state)")
-    public List<DeviceResponse> list(
+    public Page<DeviceResponse> list(
             @RequestParam(required = false) String brand,
-            @RequestParam(required = false) DeviceState state) {
-        return devices.list(brand, state).stream().map(DeviceResponse::from).toList();
+            @RequestParam(required = false) DeviceState state,
+            @PageableDefault(size = 20, sort = "id") Pageable pageable) {
+        return devices.list(brand, state, pageable).map(DeviceResponse::from);
     }
 
     @PutMapping("/{id}")

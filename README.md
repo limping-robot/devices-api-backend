@@ -42,7 +42,7 @@ All endpoints are under `/api/devices`.
 |----------|---------------------|--------------------------------------------------------------------|
 | `POST`   | `/api/devices`      | Create device (`name`, `brand` required; `state` defaults to `AVAILABLE`) |
 | `GET`    | `/api/devices/{id}` | Get one device                                                     |
-| `GET`    | `/api/devices`      | List all (optional filters: `?brand=...`, `?state=...`, or both)   |
+| `GET`    | `/api/devices`      | List all (optional filters: `?brand=...`, `?state=...`; pagination: `?page=0&size=20&sort=id`) |
 | `PUT`    | `/api/devices/{id}` | Full replace (`name`, `brand`, `state` required)                   |
 | `PATCH`  | `/api/devices/{id}` | Partial update (any subset of `name`, `brand`, `state`)            |
 | `DELETE` | `/api/devices/{id}` | Delete device                                                      |
@@ -83,7 +83,6 @@ mvn verify -Pcompose-postgres
 
 ## Future improvements
 
-- Pagination on list endpoints
 - RFC 7807 problem details for error responses
 - Readiness/liveness probes for Compose and Kubernetes
 
