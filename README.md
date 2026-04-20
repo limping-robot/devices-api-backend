@@ -5,7 +5,7 @@ Spring Boot REST API for managing devices (name, brand, state, creation time), b
 ## Stack
 
 - Java 21+, Maven 3.9+
-- Spring Boot 3.4, JPA, PostgreSQL
+- Spring Boot 3.4, JPA, Flyway, PostgreSQL
 - Docker (Compose + Testcontainers for integration tests)
 
 ## Run locally
@@ -76,7 +76,7 @@ mvn verify -Pcompose-postgres
 | CRUD + list + filter by brand/state | `DeviceController` / `DeviceService`                           |
 | Full and partial update            | `PUT` (full replace) and `PATCH` (partial, via `JsonNode`)      |
 | Domain validations                 | `DeviceRules` (pure logic) + `@PrePersist` for creation time    |
-| Persistent DB (not in-memory)      | PostgreSQL + JPA                                                |
+| Persistent DB (not in-memory)      | PostgreSQL + JPA + Flyway migrations                            |
 | Tests                              | `DeviceApiIT` (Testcontainers), `DeviceRulesTest` (unit)        |
 | API documentation                  | springdoc OpenAPI + Swagger UI                                  |
 | Containerized                      | Multi-stage `Dockerfile` + `docker-compose.yml`                 |
@@ -85,7 +85,6 @@ mvn verify -Pcompose-postgres
 
 - Pagination on list endpoints
 - RFC 7807 problem details for error responses
-- Flyway or Liquibase instead of `ddl-auto: update`
 - Readiness/liveness probes for Compose and Kubernetes
 
 ## Assumptions
